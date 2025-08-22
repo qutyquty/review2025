@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.mysite.review.DataNotFoundException;
 import com.mysite.review.dto.ReviewDTO;
+import com.mysite.review.entity.Category;
 import com.mysite.review.entity.Review;
 import com.mysite.review.repository.ReviewRepository;
 
@@ -38,13 +39,13 @@ public class ReviewService {
 		return dtos;
 	}
 	
-	public Page<ReviewDTO> getList(int page, String kw, String categoryName) {
+	public Page<ReviewDTO> getList(int page, Category category, String kw) {
 		List<Sort.Order> sorts = new ArrayList<>();
 		sorts.add(Sort.Order.desc("createdTime"));
 		Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-		Specification<Review> spec = search(kw);
+		//Specification<Review> spec = search(kw);
 		
-		Page<Review> reviewPage = this.reviewRepository.findAll(spec, pageable);
+		Page<Review> reviewPage = this.reviewRepository.findAllByKeywordAndCategory(kw, category, pageable);
 		Page<ReviewDTO> dtos = reviewPage.map(review -> ReviewDTO.toReviewDTO(review));
 		
 		return dtos;

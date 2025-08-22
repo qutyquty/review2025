@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,10 +32,14 @@ public class Review extends Base {
 	@Column(length = 500)
 	private String content;
 	
+	@ManyToOne
+	private Category category;
+	
 	public static Review toReviewCreate(ReviewDTO reviewDTO) {
 		Review review = Review.builder()
 				.title(reviewDTO.getTitle())
 				.content(reviewDTO.getContent())
+				.category(reviewDTO.getCategory())
 				.build();
 		return review;
 	}

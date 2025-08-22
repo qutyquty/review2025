@@ -2,7 +2,7 @@
 <div layout:fragment="content" class="container my-3">
 	<div class="row my-3">
 		<div class="col-6">
-			<a th:href="@{/review/create}" class="btn btn-primary">리뷰 등록하기</a>
+			<h4 th:text="${currentCategory.getName()}"></h4>			
 		</div>
 		<div class="col-6">
 			<div class="input-group">
@@ -51,6 +51,7 @@
 		</ul>
 	</div>
 	<!-- 페이징처리 끝 -->
+	<a th:href="@{/review/create}" class="btn btn-primary">리뷰 등록하기</a>
 	<form th:action="@{/review/list}" method="get" id="searchForm">
 		<input type="hidden" id="kw" name="kw" th:value="${kw}">
 		<input type="hidden" id="page" name="page" th:value="${paging.number}">

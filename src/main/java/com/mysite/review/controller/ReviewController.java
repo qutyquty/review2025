@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.mysite.review.dto.ReviewDTO;
+import com.mysite.review.entity.Category;
+import com.mysite.review.service.CategoryService;
 import com.mysite.review.service.ReviewService;
 
 import jakarta.validation.Valid;
@@ -20,15 +22,19 @@ import lombok.RequiredArgsConstructor;
 public class ReviewController {
 	
 	private final ReviewService reviewService;
+	private final CategoryService categoryService;
 	
-	@GetMapping("/review/list")
+	@GetMapping("/review/list/{categoryId}")
 	public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page, 
-			@RequestParam(value = "kw", defaultValue = "") String kw) {
+			@RequestParam(value = "kw", defaultValue = "") String kw, 
+			@PathVariable("categoryId") Integer categoryId) {
 		
-		Page<ReviewDTO> paging = this.reviewService.getList(page, kw, "영화");
+		Category category = this.categoryService.getCategory(categoryId);
+		Page<ReviewDTO> paging = this.reviewService.getList(page, category, kw);
 		
 		model.addAttribute("paging", paging);
 		model.addAttribute("kw", kw);
+		model.addAttribute("currentCategory", category);
 		
 		return "review_list";
 	}
@@ -41,7 +47,8 @@ public class ReviewController {
 	}
 	
 	@GetMapping("/review/create")
-	public String reviewCreate(ReviewDTO reviewDTO) {
+	public String reviewCreate(ReviewDTO reviewDTO, Model model) {
+		model.addAttribute("categories", categoryService.getList());
 		return "review_form";
 	}
 	
@@ -50,8 +57,12 @@ public class ReviewController {
 		if (bindingResult.hasErrors()) {
 			return "review_form";
 		}
+		
+		System.out.println("category: " + reviewDTO.getCategory().getId());
+		
 		this.reviewService.create(reviewDTO);
-		return "redirect:/review/list";
+		
+		return String.format("redirect:/review/list/%s", reviewDTO.getCategory().getId());
 	}
 	
 	@GetMapping("/review/modify/{id}")

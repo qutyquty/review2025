@@ -2,9 +2,11 @@ package com.mysite.review.dto;
 
 import java.time.LocalDateTime;
 
+import com.mysite.review.entity.Category;
 import com.mysite.review.entity.Review;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +30,9 @@ public class ReviewDTO {
 	@NotEmpty(message = "내용은 필수항목입니다.")
 	private String content;
 	
+	@NotNull(message = "카테고리는 필수 항목입니다.")
+	private Category category;
+	
 	private LocalDateTime createdTime;
 	
 	private LocalDateTime updatedTime;
@@ -37,6 +42,7 @@ public class ReviewDTO {
 				.id(review.getId())
 				.title(review.getTitle())
 				.content(review.getContent())
+				.category(review.getCategory())
 				.createdTime(review.getCreatedTime())
 				.updatedTime(review.getUpdatedTime())
 				.build();

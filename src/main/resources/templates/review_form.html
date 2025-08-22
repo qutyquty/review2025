@@ -4,6 +4,14 @@
 	<form th:object="${reviewDTO}" method="post">
 		<div th:replace="~{form_errors :: formErrorsFragment}"></div>
 		<div class="mb-3">
+			<label for="category" class="form-label">카테고리</label>
+			<select th:field="*{category}" class="form-select">
+				<option th:each="category, loop : ${categories}" 
+					 th:text="${category.name}" th:value="${category.id}">
+				</option>
+			</select>
+		</div>
+		<div class="mb-3">
 			<label for="title" class="form-label">제목</label>
 			<input type="text" th:field="*{title}" class="form-control">
 		</div>
