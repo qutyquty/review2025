@@ -24,13 +24,11 @@ public class ReviewDTO {
 	private Long id;
 	
 	@NotEmpty(message = "제목은 필수항목입니다.")
-	@Size(max = 150)
 	private String title;
 	
 	@NotEmpty(message = "내용은 필수항목입니다.")
 	private String content;
 	
-	@NotNull(message = "카테고리는 필수 항목입니다.")
 	private Category category;
 	
 	private LocalDateTime createdTime;

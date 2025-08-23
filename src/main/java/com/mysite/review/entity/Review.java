@@ -26,10 +26,10 @@ public class Review extends Base {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(length = 50)
+	@Column(length = 200)
 	private String title;
 	
-	@Column(length = 500)
+	@Column(columnDefinition = "TEXT")
 	private String content;
 	
 	@ManyToOne

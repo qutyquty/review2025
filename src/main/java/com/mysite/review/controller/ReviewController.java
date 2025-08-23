@@ -46,19 +46,20 @@ public class ReviewController {
 		return "review_detail";
 	}
 	
-	@GetMapping("/review/create")
-	public String reviewCreate(ReviewDTO reviewDTO, Model model) {
+	@GetMapping("/review/create/{categoryId}")
+	public String reviewCreate(ReviewDTO reviewDTO, Model model, 
+			@PathVariable("categoryId") Integer categoryId) {
 		model.addAttribute("categories", categoryService.getList());
+		model.addAttribute("selectedCategory", categoryId);
+		model.addAttribute("visiable", "t");
 		return "review_form";
 	}
 	
-	@PostMapping("/review/create")
+	@PostMapping("/review/create/{categoryId}")
 	public String reviewCreate(@Valid ReviewDTO reviewDTO, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
 			return "review_form";
 		}
-		
-		System.out.println("category: " + reviewDTO.getCategory().getId());
 		
 		this.reviewService.create(reviewDTO);
 		
@@ -66,10 +67,12 @@ public class ReviewController {
 	}
 	
 	@GetMapping("/review/modify/{id}")
-	public String reviewModify(ReviewDTO reviewDTO, @PathVariable("id") Long id) {
+	public String reviewModify(ReviewDTO reviewDTO, @PathVariable("id") Long id, 
+			Model model) {
 		ReviewDTO dto = this.reviewService.getReview(id);
 		reviewDTO.setTitle(dto.getTitle());
 		reviewDTO.setContent(dto.getContent());
+		model.addAttribute("visiable", "f");
 		return "review_form";
 	}
 	
