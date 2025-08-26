@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.mysite.review.dto.CommentForm;
+import com.mysite.review.dto.CommentDTO;
+import com.mysite.review.dto.ReviewDTO;
 import com.mysite.review.entity.Comment;
-import com.mysite.review.entity.Review;
 import com.mysite.review.service.CommentService;
 import com.mysite.review.service.ReviewService;
 
@@ -27,15 +27,15 @@ public class CommentController {
 	
 	@PostMapping("/create/{id}")
 	public String createComment(Model model, @PathVariable("id") Long id, 
-			@Valid CommentForm commentForm, BindingResult bindingResult) {
+			@Valid CommentDTO commentDTO, BindingResult bindingResult) {
 		
-		Review review = this.reviewService.getReviewEntity(id);
+		ReviewDTO reviewDTO = this.reviewService.getReview(id);
 		if (bindingResult.hasErrors()) {
-			model.addAttribute("review", review);
+			model.addAttribute("review", reviewDTO);
 			return "review_detail";
 		}
 		
-		Comment comment = this.commentService.create(review, commentForm.getContent());
+		Comment comment = this.commentService.create(reviewDTO, commentDTO.getContent());
 		
 		return String.format("redirect:/review/detail/%s#comment_%s",
 				comment.getReview().getId(), comment.getId());
@@ -43,20 +43,20 @@ public class CommentController {
 	}
 	
 	@GetMapping("/modify/{id}")
-	public String commentModify(CommentForm commentForm, @PathVariable("id") Long id) {
+	public String commentModify(CommentDTO commentDTO, @PathVariable("id") Long id) {
 		Comment comment = this.commentService.getComment(id);
-		commentForm.setContent(comment.getContent());
+		commentDTO.setContent(comment.getContent());
 		return "comment_form";
 	}
 	
 	@PostMapping("/modify/{id}")
-	public String commentModify(@Valid CommentForm commentForm, BindingResult bindingResult, 
+	public String commentModify(@Valid CommentDTO commentDTO, BindingResult bindingResult, 
 			@PathVariable("id") Long id) {
 		if (bindingResult.hasErrors()) {
 			return "comment_form";
 		}
 		Comment comment = this.commentService.getComment(id);
-		this.commentService.modify(comment, commentForm.getContent());
+		this.commentService.modify(comment, commentDTO.getContent());
 		return String.format("redirect:/review/detail/%s#comment_%s", 
 				comment.getReview().getId(), comment.getId());
 	}

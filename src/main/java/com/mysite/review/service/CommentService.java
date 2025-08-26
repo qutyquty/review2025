@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.mysite.review.DataNotFoundException;
+import com.mysite.review.dto.ReviewDTO;
 import com.mysite.review.entity.Comment;
 import com.mysite.review.entity.Review;
 import com.mysite.review.repository.CommentRepository;
@@ -17,10 +18,10 @@ public class CommentService {
 	
 	private final CommentRepository commentRepository;
 	
-	public Comment create(Review review, String content) {
+	public Comment create(ReviewDTO reviewDTO, String content) {
 		Comment comment = new Comment();
 		comment.setContent(content);
-		comment.setReview(review);
+		comment.setReview(Review.toReviewComment(reviewDTO));
 		this.commentRepository.save(comment);
 		return comment;
 	}

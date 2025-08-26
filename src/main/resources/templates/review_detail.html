@@ -49,7 +49,7 @@
 	</div>
 	<!-- 댓글 반복 끝 -->
 	<!-- 댓글 작성 -->
-	<form th:action="@{|/comment/create/${review.id}|}" th:object="${commentForm}" method="post" class="my-3">
+	<form th:action="@{|/comment/create/${review.id}|}" th:object="${commentDTO}" method="post" class="my-3">
 		<div th:replace="~{form_errors :: formErrorsFragment}"></div>
 		<textarea th:field="*{content}" rows="10" class="form-control"></textarea>
 		<input type="submit" value="댓글등록" class="btn btn-primary my-2">

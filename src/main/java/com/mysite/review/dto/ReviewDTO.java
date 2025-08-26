@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mysite.review.entity.Category;
+import com.mysite.review.entity.Comment;
 import com.mysite.review.entity.Review;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -37,27 +38,17 @@ public class ReviewDTO {
 	
 	private LocalDateTime updatedTime;
 	
-	@Getter
-    @Setter
-    public static class Comment {
-        private Long id;
-        private String content;
-        private LocalDateTime createdTime;
-        private LocalDateTime updatedTime;
-    }
-	
 	public static ReviewDTO toReviewDTO(Review review) {
 		ReviewDTO dto = ReviewDTO.builder()
 				.id(review.getId())
 				.title(review.getTitle())
 				.content(review.getContent())
 				.category(review.getCategory())
-//				.commentList(review.getCommentList().stream().map(
-//							r -> CommentDTO.toCommentDTO(r)
-//						).collect(Collectors.toList()))
+				.commentList(review.getCommentList())
 				.createdTime(review.getCreatedTime())
 				.updatedTime(review.getUpdatedTime())
 				.build();
+		
 		return dto;
 	}
 

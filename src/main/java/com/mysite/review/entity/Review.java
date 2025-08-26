@@ -52,12 +52,11 @@ public class Review extends Base {
 		return review;
 	}
 	
-//	public static Review toReview(ReviewDTO reviewDTO) {
-//		Review review = Review.builder()
-//				.id(reviewDTO.getId())
-//				.commentList(reviewDTO.getCommentList())
-//				.build();
-//		return review;
-//	}
+	public static Review toReviewComment(ReviewDTO reviewDTO) {
+		Review review = Review.builder()
+				.id(reviewDTO.getId())
+				.build();
+		return review;
+	}
 
 }
