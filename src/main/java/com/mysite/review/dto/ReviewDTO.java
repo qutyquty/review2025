@@ -1,13 +1,13 @@
 package com.mysite.review.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.mysite.review.entity.Category;
 import com.mysite.review.entity.Review;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,9 +31,20 @@ public class ReviewDTO {
 	
 	private Category category;
 	
+	private List<Comment> commentList = new ArrayList<>();  // 댓글 가져오기
+	
 	private LocalDateTime createdTime;
 	
 	private LocalDateTime updatedTime;
+	
+	@Getter
+    @Setter
+    public static class Comment {
+        private Long id;
+        private String content;
+        private LocalDateTime createdTime;
+        private LocalDateTime updatedTime;
+    }
 	
 	public static ReviewDTO toReviewDTO(Review review) {
 		ReviewDTO dto = ReviewDTO.builder()
@@ -41,6 +52,9 @@ public class ReviewDTO {
 				.title(review.getTitle())
 				.content(review.getContent())
 				.category(review.getCategory())
+//				.commentList(review.getCommentList().stream().map(
+//							r -> CommentDTO.toCommentDTO(r)
+//						).collect(Collectors.toList()))
 				.createdTime(review.getCreatedTime())
 				.updatedTime(review.getUpdatedTime())
 				.build();

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.mysite.review.dto.CommentForm;
 import com.mysite.review.dto.ReviewDTO;
 import com.mysite.review.entity.Category;
 import com.mysite.review.service.CategoryService;
@@ -40,8 +41,10 @@ public class ReviewController {
 	}
 	
 	@GetMapping("/review/detail/{id}")
-	public String detail(Model model, @PathVariable("id") Long id) {
+	public String detail(Model model, @PathVariable("id") Long id, CommentForm commentForm) {
+		System.out.println("===============> before");
 		ReviewDTO dto = this.reviewService.getReview(id);
+		System.out.println("===============> after");
 		model.addAttribute("review", dto);
 		return "review_detail";
 	}

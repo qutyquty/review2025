@@ -1,13 +1,18 @@
 package com.mysite.review.entity;
 
+import java.util.List;
+
 import com.mysite.review.dto.ReviewDTO;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,6 +40,9 @@ public class Review extends Base {
 	@ManyToOne
 	private Category category;
 	
+	@OneToMany(mappedBy = "review", fetch=FetchType.EAGER, cascade = CascadeType.REMOVE)
+	private List<Comment> commentList;
+	
 	public static Review toReviewCreate(ReviewDTO reviewDTO) {
 		Review review = Review.builder()
 				.title(reviewDTO.getTitle())
@@ -43,5 +51,13 @@ public class Review extends Base {
 				.build();
 		return review;
 	}
+	
+//	public static Review toReview(ReviewDTO reviewDTO) {
+//		Review review = Review.builder()
+//				.id(reviewDTO.getId())
+//				.commentList(reviewDTO.getCommentList())
+//				.build();
+//		return review;
+//	}
 
 }
