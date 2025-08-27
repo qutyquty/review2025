@@ -3,7 +3,8 @@
 	<h5 class="my-3 border-bottom pb-2">리뷰등록</h5>
 	<form th:object="${reviewDTO}" method="post">
 		<div th:replace="~{form_errors :: formErrorsFragment}"></div>
-		<div class="mb-3" th:if="${visiable} == 't'">
+		<!-- <div class="mb-3" th:if="${visiable} == 't'"> -->
+		<div class="mb-3">
 			<label for="category" class="form-label">카테고리</label>
 			<select id="category" name="category" class="form-select">
 				<option th:each="category : ${categories}" 

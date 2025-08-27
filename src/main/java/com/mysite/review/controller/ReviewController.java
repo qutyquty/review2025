@@ -74,7 +74,9 @@ public class ReviewController {
 		ReviewDTO dto = this.reviewService.getReview(id);
 		reviewDTO.setTitle(dto.getTitle());
 		reviewDTO.setContent(dto.getContent());
-		model.addAttribute("visiable", "f");
+		//model.addAttribute("visiable", "f");
+		model.addAttribute("categories", categoryService.getList());
+		model.addAttribute("selectedCategory", dto.getCategory().getId());
 		return "review_form";
 	}
 	

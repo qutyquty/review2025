@@ -80,6 +80,7 @@ public class ReviewService {
 		if (review.isPresent()) {
 			review.get().setTitle(reviewDTO.getTitle());
 			review.get().setContent(reviewDTO.getContent());
+			review.get().setCategory(reviewDTO.getCategory());
 			this.reviewRepository.save(review.get());
 		}
 	}
