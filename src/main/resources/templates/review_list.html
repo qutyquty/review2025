@@ -24,6 +24,10 @@
 				<td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
 				<td class="text-start">
 					<a th:href="@{|/review/detail/${review.id}|}" th:text="${review.title}"></a>
+					<span class="text-danger small ms-2"
+						th:if="${#lists.size(review.commentList) > 0}"
+						th:text="${#lists.size(review.commentList)}">
+					</span>
 				</td>
 				<td th:text="${#temporals.format(review.createdTime, 'yyyy-MM-dd HH:mm')}"></td>
 			</tr>
