@@ -3,6 +3,7 @@ package com.mysite.review.controller;
 import java.security.Principal;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.mysite.review.dto.CommentDTO;
 import com.mysite.review.dto.ReviewDTO;
@@ -77,29 +79,47 @@ public class ReviewController {
 		return String.format("redirect:/review/list/%s", reviewDTO.getCategory().getId());
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/review/modify/{id}")
 	public String reviewModify(ReviewDTO reviewDTO, @PathVariable("id") Long id, 
-			Model model) {
+			Model model, Principal principal) {
+		
 		ReviewDTO dto = this.reviewService.getReview(id);
+		if (!dto.getAuthor().getUsername().equals(principal.getName())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다."); 
+		}
+		
 		reviewDTO.setTitle(dto.getTitle());
 		reviewDTO.setContent(dto.getContent());
 		model.addAttribute("categories", categoryService.getList());
 		model.addAttribute("selectedCategory", dto.getCategory().getId());
+		
 		return "review_form";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/review/modify/{id}")
 	public String reviewModify(@Valid ReviewDTO reviewDTO, BindingResult bindingResult, 
-			@PathVariable("id") Long id) {
+			@PathVariable("id") Long id, Principal principal) {
 		if (bindingResult.hasErrors()) {
 			return "review_form";
+		}
+		ReviewDTO dto = this.reviewService.getReview(id);
+		if (!dto.getAuthor().getUsername().equals(principal.getName())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
 		}
 		this.reviewService.modify(reviewDTO, id);
 		return String.format("redirect:/review/detail/%s", id);
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/review/delete/{id}")
-	public String reviewDelete(@PathVariable("id") Long id) {
+	public String reviewDelete(@PathVariable("id") Long id, Principal principal) {
+		ReviewDTO dto = this.reviewService.getReview(id);
+		if (!dto.getAuthor().getUsername().equals(principal.getName()) ) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
+		}
+		
 		this.reviewService.delete(id);
 		return "redirect:/";
 	}
