@@ -2,6 +2,7 @@
 <div layout:fragment="content" class="container">
 	<h5 class="my-3 border-bottom pb-2">리뷰등록</h5>
 	<form th:object="${reviewDTO}" method="post">
+		<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 		<div th:replace="~{form_errors :: formErrorsFragment}"></div>
 		<div class="mb-3">
 			<label for="category" class="form-label">카테고리</label>
