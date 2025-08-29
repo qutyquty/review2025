@@ -1,5 +1,8 @@
 package com.mysite.review.controller;
 
+import java.security.Principal;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.mysite.review.dto.CommentDTO;
 import com.mysite.review.dto.ReviewDTO;
 import com.mysite.review.entity.Comment;
+import com.mysite.review.entity.SiteUser;
 import com.mysite.review.service.CommentService;
 import com.mysite.review.service.ReviewService;
+import com.mysite.review.service.UserService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,18 +29,22 @@ public class CommentController {
 	
 	private final ReviewService reviewService;
 	private final CommentService commentService;
+	private final UserService userService;
 	
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/create/{id}")
 	public String createComment(Model model, @PathVariable("id") Long id, 
-			@Valid CommentDTO commentDTO, BindingResult bindingResult) {
+			@Valid CommentDTO commentDTO, BindingResult bindingResult, 
+			Principal principal) {
 		
 		ReviewDTO reviewDTO = this.reviewService.getReview(id);
+		SiteUser siteUser = this.userService.getUser(principal.getName());
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("review", reviewDTO);
 			return "review_detail";
 		}
 		
-		Comment comment = this.commentService.create(reviewDTO, commentDTO.getContent());
+		Comment comment = this.commentService.create(reviewDTO, commentDTO.getContent(), siteUser);
 		
 		return String.format("redirect:/review/detail/%s#comment_%s",
 				comment.getReview().getId(), comment.getId());

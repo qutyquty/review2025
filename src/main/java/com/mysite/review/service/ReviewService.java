@@ -16,6 +16,7 @@ import com.mysite.review.DataNotFoundException;
 import com.mysite.review.dto.ReviewDTO;
 import com.mysite.review.entity.Category;
 import com.mysite.review.entity.Review;
+import com.mysite.review.entity.SiteUser;
 import com.mysite.review.repository.ReviewRepository;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -70,8 +71,9 @@ public class ReviewService {
 		}
 	}
 	
-	public void create(ReviewDTO reviewDTO) {
+	public void create(ReviewDTO reviewDTO, SiteUser user) {
 		Review review = Review.toReviewCreate(reviewDTO);
+		review.setAuthor(user);
 		this.reviewRepository.save(review);
 	}
 	

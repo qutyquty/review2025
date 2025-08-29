@@ -8,6 +8,7 @@ import com.mysite.review.DataNotFoundException;
 import com.mysite.review.dto.ReviewDTO;
 import com.mysite.review.entity.Comment;
 import com.mysite.review.entity.Review;
+import com.mysite.review.entity.SiteUser;
 import com.mysite.review.repository.CommentRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,11 @@ public class CommentService {
 	
 	private final CommentRepository commentRepository;
 	
-	public Comment create(ReviewDTO reviewDTO, String content) {
+	public Comment create(ReviewDTO reviewDTO, String content, SiteUser author) {
 		Comment comment = new Comment();
 		comment.setContent(content);
 		comment.setReview(Review.toReviewComment(reviewDTO));
+		comment.setAuthor(author);;
 		this.commentRepository.save(comment);
 		return comment;
 	}

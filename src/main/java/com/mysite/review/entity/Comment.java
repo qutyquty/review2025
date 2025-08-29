@@ -24,5 +24,8 @@ public class Comment extends Base {
 	
 	@ManyToOne
 	private Review review;
+	
+	@ManyToOne
+	private SiteUser author;
 
 }

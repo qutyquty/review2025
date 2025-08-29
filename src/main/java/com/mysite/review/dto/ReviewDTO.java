@@ -7,6 +7,7 @@ import java.util.List;
 import com.mysite.review.entity.Category;
 import com.mysite.review.entity.Comment;
 import com.mysite.review.entity.Review;
+import com.mysite.review.entity.SiteUser;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,8 @@ public class ReviewDTO {
 	
 	private Category category;
 	
+	private SiteUser author;
+	
 	private List<Comment> commentList = new ArrayList<>();  // 댓글 가져오기
 	
 	private LocalDateTime createdTime;
@@ -44,6 +47,7 @@ public class ReviewDTO {
 				.title(review.getTitle())
 				.content(review.getContent())
 				.category(review.getCategory())
+				.author(review.getAuthor())
 				.commentList(review.getCommentList())
 				.createdTime(review.getCreatedTime())
 				.updatedTime(review.getUpdatedTime())

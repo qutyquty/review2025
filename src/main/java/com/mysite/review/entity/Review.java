@@ -40,6 +40,9 @@ public class Review extends Base {
 	@ManyToOne
 	private Category category;
 	
+	@ManyToOne
+	private SiteUser author;
+	
 	@OneToMany(mappedBy = "review", fetch=FetchType.EAGER, cascade = CascadeType.REMOVE)
 	private List<Comment> commentList;
 	

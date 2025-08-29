@@ -22,7 +22,7 @@ class ReviewApplicationTests {
 					.title(title)
 					.content(content)
 					.build();
-			this.reviewService.create(dto);
+			this.reviewService.create(dto, null);
 		}
 	}
 

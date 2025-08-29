@@ -1,6 +1,9 @@
 package com.mysite.review.controller;
 
+import java.security.Principal;
+
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.mysite.review.dto.CommentDTO;
 import com.mysite.review.dto.ReviewDTO;
 import com.mysite.review.entity.Category;
+import com.mysite.review.entity.SiteUser;
 import com.mysite.review.service.CategoryService;
 import com.mysite.review.service.ReviewService;
+import com.mysite.review.service.UserService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +29,7 @@ public class ReviewController {
 	
 	private final ReviewService reviewService;
 	private final CategoryService categoryService;
+	private final UserService userService;
 	
 	@GetMapping("/review/list/{categoryId}")
 	public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page, 
@@ -48,22 +54,25 @@ public class ReviewController {
 		return "review_detail";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/review/create/{categoryId}")
 	public String reviewCreate(ReviewDTO reviewDTO, Model model, 
 			@PathVariable("categoryId") Integer categoryId) {
 		model.addAttribute("categories", categoryService.getList());
 		model.addAttribute("selectedCategory", categoryId);
-		model.addAttribute("visiable", "t");
 		return "review_form";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/review/create/{categoryId}")
-	public String reviewCreate(@Valid ReviewDTO reviewDTO, BindingResult bindingResult) {
+	public String reviewCreate(@Valid ReviewDTO reviewDTO, BindingResult bindingResult, 
+			Principal principal) {
 		if (bindingResult.hasErrors()) {
 			return "review_form";
 		}
 		
-		this.reviewService.create(reviewDTO);
+		SiteUser siteUser = this.userService.getUser(principal.getName());
+		this.reviewService.create(reviewDTO, siteUser);
 		
 		return String.format("redirect:/review/list/%s", reviewDTO.getCategory().getId());
 	}
