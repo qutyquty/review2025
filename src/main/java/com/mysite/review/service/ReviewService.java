@@ -105,5 +105,11 @@ public class ReviewService {
 			}
 		};
 	}
+	
+	public void vote(ReviewDTO reviewDTO, SiteUser siteUser) {
+		Review review = Review.toReviewVote(reviewDTO);
+		review.getVoter().add(siteUser);
+		this.reviewRepository.save(review);
+	}
 
 }

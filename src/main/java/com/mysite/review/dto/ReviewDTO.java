@@ -3,6 +3,7 @@ package com.mysite.review.dto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.mysite.review.entity.Category;
 import com.mysite.review.entity.Comment;
@@ -35,6 +36,8 @@ public class ReviewDTO {
 	
 	private SiteUser author;
 	
+	private Set<SiteUser> voter;
+	
 	private List<Comment> commentList = new ArrayList<>();  // 댓글 가져오기
 	
 	private LocalDateTime createdTime;
@@ -49,6 +52,7 @@ public class ReviewDTO {
 				.category(review.getCategory())
 				.author(review.getAuthor())
 				.commentList(review.getCommentList())
+				.voter(review.getVoter())
 				.createdTime(review.getCreatedTime())
 				.updatedTime(review.getUpdatedTime())
 				.build();

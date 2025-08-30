@@ -1,6 +1,7 @@
 package com.mysite.review.entity;
 
 import java.util.List;
+import java.util.Set;
 
 import com.mysite.review.dto.ReviewDTO;
 
@@ -11,6 +12,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
@@ -43,6 +45,9 @@ public class Review extends Base {
 	@ManyToOne
 	private SiteUser author;
 	
+	@ManyToMany(fetch=FetchType.EAGER)
+	Set<SiteUser> voter;
+	
 	@OneToMany(mappedBy = "review", fetch=FetchType.EAGER, cascade = CascadeType.REMOVE)
 	private List<Comment> commentList;
 	
@@ -58,6 +63,18 @@ public class Review extends Base {
 	public static Review toReviewComment(ReviewDTO reviewDTO) {
 		Review review = Review.builder()
 				.id(reviewDTO.getId())
+				.build();
+		return review;
+	}
+	
+	public static Review toReviewVote(ReviewDTO reviewDTO) {
+		Review review = Review.builder()
+				.id(reviewDTO.getId())
+				.title(reviewDTO.getTitle())
+				.content(reviewDTO.getContent())
+				.category(reviewDTO.getCategory())
+				.author(reviewDTO.getAuthor())
+				.voter(reviewDTO.getVoter())
 				.build();
 		return review;
 	}

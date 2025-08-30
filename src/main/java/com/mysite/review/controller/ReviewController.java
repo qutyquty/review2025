@@ -123,5 +123,14 @@ public class ReviewController {
 		this.reviewService.delete(id);
 		return "redirect:/";
 	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/review/vote/{id}")
+	public String reviewVoter(Principal principal, @PathVariable("id") Long id) {
+		ReviewDTO dto = this.reviewService.getReview(id);
+		SiteUser siteUser = this.userService.getUser(principal.getName());
+		this.reviewService.vote(dto, siteUser);
+		return String.format("redirect:/review/detail/%s", id);
+	}
 
 }
