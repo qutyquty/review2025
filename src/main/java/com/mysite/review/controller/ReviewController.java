@@ -52,6 +52,7 @@ public class ReviewController {
 	public String detail(Model model, @PathVariable("id") Long id, CommentDTO commentDTO) {
 		ReviewDTO reviewDTO = this.reviewService.getReview(id);
 		model.addAttribute("review", reviewDTO);
+		model.addAttribute("base_path", "https://image.tmdb.org/t/p/w300_and_h450_bestv2");
 		
 		return "review_detail";
 	}

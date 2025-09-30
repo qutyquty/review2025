@@ -39,6 +39,12 @@ public class Review extends Base {
 	@Column(columnDefinition = "TEXT")
 	private String content;
 	
+	@Column(columnDefinition = "TEXT")
+	private String overview;
+	
+	@Column(length = 200)
+	private String posterPath;
+	
 	@ManyToOne
 	private Category category;
 	

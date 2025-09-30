@@ -32,6 +32,10 @@ public class ReviewDTO {
 	@NotEmpty(message = "내용은 필수항목입니다.")
 	private String content;
 	
+	private String overview;
+	
+	private String posterPath;
+	
 	private Category category;
 	
 	private SiteUser author;
@@ -49,6 +53,8 @@ public class ReviewDTO {
 				.id(review.getId())
 				.title(review.getTitle())
 				.content(review.getContent())
+				.overview(review.getOverview())
+				.posterPath(review.getPosterPath())
 				.category(review.getCategory())
 				.author(review.getAuthor())
 				.commentList(review.getCommentList())
