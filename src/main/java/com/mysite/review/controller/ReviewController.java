@@ -15,10 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.mysite.review.dto.CommentDTO;
+import com.mysite.review.dto.CreditsResponse;
+import com.mysite.review.dto.MovieDTO;
 import com.mysite.review.dto.ReviewDTO;
 import com.mysite.review.entity.Category;
 import com.mysite.review.entity.SiteUser;
 import com.mysite.review.service.CategoryService;
+import com.mysite.review.service.MovieService;
 import com.mysite.review.service.ReviewService;
 import com.mysite.review.service.UserService;
 
@@ -32,6 +35,7 @@ public class ReviewController {
 	private final ReviewService reviewService;
 	private final CategoryService categoryService;
 	private final UserService userService;
+	private final MovieService movieService;
 	
 	@GetMapping("/review/list/{categoryId}")
 	public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page, 
@@ -49,8 +53,15 @@ public class ReviewController {
 	}
 	
 	@GetMapping("/review/detail/{id}")
-	public String detail(Model model, @PathVariable("id") Long id, CommentDTO commentDTO) {
+	public String detail(Model model, @PathVariable("id") Long id, CommentDTO commentDTO) throws Exception {
 		ReviewDTO reviewDTO = this.reviewService.getReview(id);
+		
+		Long movId = reviewDTO.getTmdbId();
+		MovieDTO movie = movieService.getMovieById(movId);
+		CreditsResponse credits = movieService.getMovieCredits(movId);
+        
+		model.addAttribute("castList", credits.getCast());
+        model.addAttribute("movie", movie);
 		model.addAttribute("review", reviewDTO);
 		model.addAttribute("base_path", "https://image.tmdb.org/t/p/w300_and_h450_bestv2");
 		

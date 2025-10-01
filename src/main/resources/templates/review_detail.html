@@ -6,13 +6,27 @@
 	<div class="card mb-3">
 	  <div class="row g-0">
 	    <div class="col-md-4">
-	      <img th:src="${base_path + review.posterPath}" class="img-fluid rounded-start" alt="poster">
+	      <img th:src="${base_path + movie.posterPath}" class="img-fluid rounded-start" alt="poster">
 	    </div>
 	    <div class="col-md-8">
 	      <div class="card-body">
 	        <h2 class="card-title border-bottom py-2" th:text="${review.title}"></h2>
-	        <p class="card-text" th:text="${review.overview}"></p>
-	        <p class="card-text"><small class="text-body-secondary">출연배우</small></p>
+	        <p class="card-text" th:text="${movie.overview}"></p>
+	        <!-- <p class="card-text"><small class="text-body-secondary">출연배우</small></p> -->
+			<div class="row row-cols-2 row-cols-md-4 g-4">
+			    <div class="col" th:each="actor : ${castList}">
+			        <div class="card h-100 text-center">
+			            <img th:if="${actor.profilePath != null}"
+			                 th:src="@{'https://image.tmdb.org/t/p/w200' + ${actor.profilePath}}"
+			                 class="card-img-top"
+			                 alt="배우 사진">
+			            <div class="card-body">
+			                <h6 class="card-title" th:text="${actor.name}"></h6>
+			                <p class="card-text text-muted" th:text="${actor.character}"></p>
+			            </div>
+			        </div>
+			    </div>
+			</div>
 	      </div>
 	    </div>
 	  </div>

@@ -36,6 +36,8 @@ public class ReviewDTO {
 	
 	private String posterPath;
 	
+	private Long tmdbId;
+	
 	private Category category;
 	
 	private SiteUser author;
@@ -55,6 +57,7 @@ public class ReviewDTO {
 				.content(review.getContent())
 				.overview(review.getOverview())
 				.posterPath(review.getPosterPath())
+				.tmdbId(review.getTmdbId())
 				.category(review.getCategory())
 				.author(review.getAuthor())
 				.commentList(review.getCommentList())

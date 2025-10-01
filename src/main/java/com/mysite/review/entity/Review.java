@@ -45,6 +45,8 @@ public class Review extends Base {
 	@Column(length = 200)
 	private String posterPath;
 	
+	private Long tmdbId;
+	
 	@ManyToOne
 	private Category category;
 	
