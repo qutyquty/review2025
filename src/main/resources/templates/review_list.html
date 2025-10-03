@@ -69,6 +69,7 @@
 	<!-- 페이징처리 끝 -->
 	<!-- 등록버튼 -->
 	<a th:href="@{|/review/create/${currentCategory.getId}|}" class="btn btn-primary">리뷰 등록하기</a>
+	<a th:href="@{/review/searchtmdb}" class="btn btn-primary">tmdb 영화검색</a>
 	<!-- 페이지번호 클릭, 조회하기 클릭 시 처리하는 폼데이터 -->
 	<form th:action="@{|/review/list/${currentCategory.getId}|}" method="get" id="searchForm">
 		<input type="hidden" id="kw" name="kw" th:value="${kw}">

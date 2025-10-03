@@ -77,6 +77,17 @@ public class ReviewService {
 		this.reviewRepository.save(review);
 	}
 	
+	public void createTmdb(String title, Long movieId, Category category, SiteUser user) {
+		// title, tmdb_id, category 저장
+		Review review = Review.builder()
+				.title(title)
+				.tmdbId(movieId)
+				.category(category)
+				.build();
+		review.setAuthor(user);
+		this.reviewRepository.save(review);
+	}
+	
 	public void modify(ReviewDTO reviewDTO, Long id) {
 		Optional<Review> review = this.reviewRepository.findById(id);
 		if (review.isPresent()) {

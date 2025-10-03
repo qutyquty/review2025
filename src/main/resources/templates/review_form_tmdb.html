@@ -1,0 +1,62 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
+	<h5 class="my-3 border-bottom pb-2">리뷰등록</h5>
+	<form th:object="${reviewDTO}" method="post">
+		<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+		<div th:replace="~{form_errors :: formErrorsFragment}"></div>
+		<div class="mb-3">
+			<label for="category" class="form-label">카테고리</label>
+			<select id="category" name="category" class="form-select">
+				<option th:each="category : ${categories}" 
+					 th:value="${category.id}" th:text="${category.name}" 
+					 th:selected="${category.id} == ${selectedCategory}">
+				</option>
+			</select>
+		</div>
+		<!-- 
+		<div class="mb-3">
+			<label for="title" class="form-label">제목</label>
+			<input type="text" th:field="*{title}" class="form-control">
+		</div>
+		-->
+		<div class="mb-3 row">
+			<div class="col-6">
+				<div class="input-group">
+					<input type="text" id="search_kw" class="form-control" th:value="${kw}" placeholder="영화제목">
+					<button type="button" class="btn btn-outline-secondary" id="btn_search">영화검색</button>
+				</div>
+			</div>
+		</div>
+		<div class="row g-3">
+			<div class="col-md-3" th:each="movie : ${movies}">
+				<div class="card h-100">
+					<img th:if="${movie.posterPath != null}"
+			             th:src="@{'https://image.tmdb.org/t/p/w500' + ${movie.posterPath}}"
+			             class="card-img-top" th:alt="${movie.title} 포스터">
+			        <div th:if="${movie.posterPath == null}" class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height:400px;">
+			          포스터 없음</div>
+		        <div class="card-body">
+		          <h5 class="card-title" th:text="${movie.title}"></h5>
+		          <p class="card-text"><small class="text-muted" th:text="${movie.releaseDate}"></small></p>
+		          <p class="card-text" th:text="${movie.overview}"></p>
+		        </div>
+			</div>
+		</div>
+		<div class="mb-3">
+			<label for="content" class="form-label">내용</label>
+			<textarea th:field="*{content}" class="form-control" rows="10"></textarea>		
+		</div>
+		<input type="submit" value="저장하기" class="btn btn-primary my-2">
+	</form>
+	<form th:action="@{/movies/search}" method="get" id="searchForm">
+		<input type="hidden" id="kw" name="kw" th:value="${kw}">
+	</form>
+</div>
+<script layout:fragment="script" type="text/javascript">
+const btn_search = document.getElementById("btn_search");
+btn_search.addEventListener('click', function() {
+    document.getElementById('kw').value = document.getElementById('search_kw').value;
+    document.getElementById('searchForm').submit();
+});
+</script>
+</html>

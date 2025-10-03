@@ -17,5 +17,8 @@ public class MovieDTO {
     
     @JsonProperty("poster_path")
     private String posterPath;
+    
+    @JsonProperty("release_date")
+    private String releaseDate;
 
 }

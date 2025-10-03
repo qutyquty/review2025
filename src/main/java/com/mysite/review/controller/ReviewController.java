@@ -4,6 +4,7 @@ import java.security.Principal;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.mysite.review.dto.CommentDTO;
 import com.mysite.review.dto.CreditsResponse;
 import com.mysite.review.dto.MovieDTO;
+import com.mysite.review.dto.MovieSearchResponse;
 import com.mysite.review.dto.ReviewDTO;
 import com.mysite.review.entity.Category;
 import com.mysite.review.entity.SiteUser;
@@ -90,6 +92,35 @@ public class ReviewController {
 		
 		return String.format("redirect:/review/list/%s", reviewDTO.getCategory().getId());
 	}
+
+	@GetMapping("/review/searchtmdb")
+	public String reviewCreateTmdb() {
+		// tmdb 검색 화면
+		return "review_tmdb";
+	}
+
+	@GetMapping("/movies/search")
+	public String search(@RequestParam("title") String title, Model model) {
+		// tmdb 검색 화면 - 영화 제목으로 포스터 가져오기
+		MovieSearchResponse response = movieService.searchMovie(title).block(); // 동기 처리
+		model.addAttribute("movies", response.getResults());
+		return "review_tmdb";
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+    @PostMapping("/movies/select")
+    public String selectMovie(@RequestParam("movieId") Long movieId,
+    		@RequestParam("movieTitle") String movieTitle,
+    		Principal principal) {
+        // tmdb 검색 화면 - 선택한 포스터로 tmdb 영화 id 가져와서 저장
+    	// 여기서 DB 저장, 로그 기록, 다른 API 호출 등 원하는 로직 수행
+		
+		Category category = this.categoryService.getCategory(1);
+		SiteUser siteUser = this.userService.getUser(principal.getName());
+		this.reviewService.createTmdb(movieTitle, movieId, category, siteUser);
+		
+		return String.format("redirect:/review/list/%s", "1");
+    }
 	
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/review/modify/{id}")
