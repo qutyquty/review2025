@@ -1,10 +1,11 @@
 package com.mysite.review.controller;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,15 +60,26 @@ public class ReviewController {
 		ReviewDTO reviewDTO = this.reviewService.getReview(id);
 		
 		Long movId = reviewDTO.getTmdbId();
-		MovieDTO movie = movieService.getMovieById(movId);
-		CreditsResponse credits = movieService.getMovieCredits(movId);
-        
-		model.addAttribute("castList", credits.getCast());
-        model.addAttribute("movie", movie);
-		model.addAttribute("review", reviewDTO);
-		model.addAttribute("base_path", "https://image.tmdb.org/t/p/w300_and_h450_bestv2");
+		String title = reviewDTO.getTitle();
+		int idx = title.indexOf("(");
+		if (idx != -1) {
+			title = title.substring(0, idx);
+		}
 		
-		return "review_detail";
+		if (movId == null) {
+			String encodedTitle = URLEncoder.encode(title, StandardCharsets.UTF_8);
+			return "redirect:/movies/search?title=" + encodedTitle + "&reviewId=" + id;
+		} else {
+			MovieDTO movie = movieService.getMovieById(movId);
+			CreditsResponse credits = movieService.getMovieCredits(movId);
+	        
+			model.addAttribute("castList", credits.getCast());
+	        model.addAttribute("movie", movie);
+			model.addAttribute("review", reviewDTO);
+			model.addAttribute("base_path", "https://image.tmdb.org/t/p/w300_and_h450_bestv2");
+			
+			return "review_detail";
+		}
 	}
 	
 	@PreAuthorize("isAuthenticated()")
@@ -100,9 +112,12 @@ public class ReviewController {
 	}
 
 	@GetMapping("/movies/search")
-	public String search(@RequestParam("title") String title, Model model) {
+	public String search(@RequestParam("title") String title, 
+			@RequestParam("reviewId") Long reviewId,
+			Model model) {
 		// tmdb 검색 화면 - 영화 제목으로 포스터 가져오기
 		MovieSearchResponse response = movieService.searchMovie(title).block(); // 동기 처리
+		model.addAttribute("reviewId", reviewId);
 		model.addAttribute("movies", response.getResults());
 		return "review_tmdb";
 	}
@@ -111,13 +126,20 @@ public class ReviewController {
     @PostMapping("/movies/select")
     public String selectMovie(@RequestParam("movieId") Long movieId,
     		@RequestParam("movieTitle") String movieTitle,
+    		@RequestParam("reviewId") Long reviewId,
     		Principal principal) {
-        // tmdb 검색 화면 - 선택한 포스터로 tmdb 영화 id 가져와서 저장
-    	// 여기서 DB 저장, 로그 기록, 다른 API 호출 등 원하는 로직 수행
 		
-		Category category = this.categoryService.getCategory(1);
-		SiteUser siteUser = this.userService.getUser(principal.getName());
-		this.reviewService.createTmdb(movieTitle, movieId, category, siteUser);
+		// reviewId>0: review에 있는 거는 tmdb_id만 update
+		// reviewId=0: review에 없는 거는 tmdb_id, title 등을 insert
+		if (reviewId > 0) {
+			System.out.println("================> reviewId: " + reviewId);
+			this.reviewService.updateTmdb(reviewId, movieId);
+		} else {
+			// tmdb 검색 화면 - 선택한 포스터로 tmdb 영화 id 가져와서 저장
+			Category category = this.categoryService.getCategory(1);
+			SiteUser siteUser = this.userService.getUser(principal.getName());
+			this.reviewService.createTmdb(movieTitle, movieId, category, siteUser);
+		}
 		
 		return String.format("redirect:/review/list/%s", "1");
     }

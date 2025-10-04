@@ -88,6 +88,16 @@ public class ReviewService {
 		this.reviewRepository.save(review);
 	}
 	
+
+	public void updateTmdb(Long reviewId, Long movieId) {
+		// reviewId에 movieId를 update
+		Optional<Review> review = this.reviewRepository.findById(reviewId);
+		if (review.isPresent()) {
+			review.get().setTmdbId(movieId);
+			this.reviewRepository.save(review.get());
+		}
+	}
+	
 	public void modify(ReviewDTO reviewDTO, Long id) {
 		Optional<Review> review = this.reviewRepository.findById(id);
 		if (review.isPresent()) {
