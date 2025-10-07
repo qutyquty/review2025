@@ -3,6 +3,11 @@ package com.mysite.review.controller;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.mysite.review.dto.CastDTO;
 import com.mysite.review.dto.CommentDTO;
 import com.mysite.review.dto.CreditsResponse;
 import com.mysite.review.dto.MovieDTO;
@@ -56,8 +62,9 @@ public class ReviewController {
 	}
 	
 	@GetMapping("/review/detail/{id}")
-	public String detail(Model model, @PathVariable("id") Long id, CommentDTO commentDTO) throws Exception {
+	public String detail(Model model, @PathVariable("id") Long id, CommentDTO commentDTO) {
 		ReviewDTO reviewDTO = this.reviewService.getReview(id);
+		Integer categoryId = reviewDTO.getCategory().getId();
 		
 		Long movId = reviewDTO.getTmdbId();
 		String title = reviewDTO.getTitle();
@@ -68,15 +75,36 @@ public class ReviewController {
 		
 		if (movId == null) {
 			String encodedTitle = URLEncoder.encode(title, StandardCharsets.UTF_8);
-			return "redirect:/movies/search?title=" + encodedTitle + "&reviewId=" + id;
+			return "redirect:/movies/search?title=" + encodedTitle + "&reviewId=" + id + "&category=" + categoryId;
 		} else {
-			MovieDTO movie = movieService.getMovieById(movId);
-			CreditsResponse credits = movieService.getMovieCredits(movId);
+			//MovieDTO movie = movieService.getMovieById(movId);
+			//CreditsResponse credits = movieService.getMovieCredits(movId);
+			
+			MovieDTO movie = movieService.getTmdbById(movId, categoryId);
+			CreditsResponse credits = movieService.getTmdbCredits(movId, categoryId);
+			
+			List<CastDTO> castList = Optional.ofNullable(credits.getCast())
+			        .orElse(Collections.emptyList());
+
+			for (int i = 0; i < 8; i++) {
+			    CastDTO actor = castList.get(i);
+			    if (actor == null) {
+			        System.out.println("배우 " + i + "번이 null 입니다.");
+			    } else {
+			        System.out.println("배우 " + i + "번: name=" + actor.getName() 
+			                           + ", profilePath=" + actor.getProfilePath());
+			    }
+			}
+			
+//			List<CastDTO> safeCastList = credits.getCast().stream()
+//			        .filter(Objects::nonNull) // actor 자체가 null인 경우 제거
+//			        .filter(actor -> actor.getProfilePath() != null) // profilePath 없는 경우 제거
+//			        .collect(Collectors.toList());
 	        
 			model.addAttribute("castList", credits.getCast());
 	        model.addAttribute("movie", movie);
 			model.addAttribute("review", reviewDTO);
-			model.addAttribute("base_path", "https://image.tmdb.org/t/p/w300_and_h450_bestv2");
+			//model.addAttribute("base_path", "https://image.tmdb.org/t/p/w300_and_h450_bestv2");
 			
 			return "review_detail";
 		}
@@ -105,18 +133,28 @@ public class ReviewController {
 		return String.format("redirect:/review/list/%s", reviewDTO.getCategory().getId());
 	}
 
-	@GetMapping("/review/searchtmdb")
-	public String reviewCreateTmdb() {
+	@GetMapping("/review/searchtmdb/{categoryId}")
+	public String reviewCreateTmdb(Model model, 
+			@PathVariable("categoryId") Integer categoryId) {
 		// tmdb 검색 화면
+		model.addAttribute("categories", categoryService.getList());
+		model.addAttribute("selectedCategory", categoryId);
+		model.addAttribute("title", "");
 		return "review_tmdb";
 	}
 
 	@GetMapping("/movies/search")
 	public String search(@RequestParam("title") String title, 
 			@RequestParam("reviewId") Long reviewId,
+			@RequestParam("category") Integer category,
 			Model model) {
 		// tmdb 검색 화면 - 영화 제목으로 포스터 가져오기
-		MovieSearchResponse response = movieService.searchMovie(title).block(); // 동기 처리
+		//MovieSearchResponse response = movieService.searchMovie(title).block(); // 동기 처리
+		MovieSearchResponse response = movieService.searchTmdb(title, category).block(); // 동기 처리
+		
+		model.addAttribute("categories", categoryService.getList());
+		model.addAttribute("selectedCategory", category);
+		model.addAttribute("title", title);
 		model.addAttribute("reviewId", reviewId);
 		model.addAttribute("movies", response.getResults());
 		return "review_tmdb";

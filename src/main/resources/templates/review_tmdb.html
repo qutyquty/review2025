@@ -1,10 +1,21 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container">
-	<h5 class="my-3 border-bottom pb-2">TMDB 영화 검색</h5>
-	<form action="/movies/search" method="get" class="input-group mb-3">
+	<h5 class="my-3 border-bottom pb-2">TMDB 영화/드라마/애니 검색</h5>
+	<form action="/movies/search" method="get">
+		<div class="mb-3">
+			<label for="category" class="form-label">카테고리</label>
+			<select id="category" name="category" class="form-select">
+				<option th:each="category : ${categories}" 
+					 th:value="${category.id}" th:text="${category.name}" 
+					 th:selected="${category.id} == ${selectedCategory}">
+				</option>
+			</select>
+		</div>	
 	    <input type="hidden" name="reviewId" value="0">
-	    <input type="text" name="title" class="form-control" placeholder="영화 제목을 입력하세요">
-	    <button class="btn btn-primary" type="submit">검색</button>
+		<div class="input-group mb-3">
+			<input type="text" name="title" th:value="${title}" class="form-control" placeholder="영화 제목을 입력하세요">
+		    <button class="btn btn-primary" type="submit">검색</button>
+		</div>	    
 	</form>
 	
 <form id="movieForm" th:action="@{/movies/select}" method="post">

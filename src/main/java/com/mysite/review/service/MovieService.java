@@ -28,9 +28,29 @@ public class MovieService {
                 .block(); // 동기적으로 결과 받기
     }
     
+    public MovieDTO getTmdbById(Long movieId, Integer categoryId) {
+    	String searchType = categoryId == 1 ? "movie" : "tv";
+    	
+        return webClient.get()
+                .uri("/{searchType}/{id}?api_key={apiKey}&language=ko-KR", searchType, movieId, API_KEY)
+                .retrieve()
+                .bodyToMono(MovieDTO.class)
+                .block(); // 동기적으로 결과 받기
+    }
+    
     public CreditsResponse getMovieCredits(Long movieId) {
         return webClient.get()
                 .uri("/movie/{id}/credits?api_key={apiKey}&language=ko-KR", movieId, API_KEY)
+                .retrieve()
+                .bodyToMono(CreditsResponse.class)
+                .block();
+    }
+
+    public CreditsResponse getTmdbCredits(Long movieId, Integer categoryId) {
+    	String searchType = categoryId == 1 ? "movie" : "tv";
+    	
+        return webClient.get()
+                .uri("/{searchType}/{id}/credits?api_key={apiKey}&language=ko-KR", searchType, movieId, API_KEY)
                 .retrieve()
                 .bodyToMono(CreditsResponse.class)
                 .block();
@@ -40,6 +60,20 @@ public class MovieService {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/search/movie")
+                        .queryParam("api_key", API_KEY)
+                        .queryParam("query", query)
+                        .queryParam("language", "ko-KR")
+                        .build())
+                .retrieve()
+                .bodyToMono(MovieSearchResponse.class);
+    }
+    
+    public Mono<MovieSearchResponse> searchTmdb(String query, Integer categoryId) {
+    	String searchType = categoryId == 1 ? "/movie" : "/tv";
+    	
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/search" + searchType)
                         .queryParam("api_key", API_KEY)
                         .queryParam("query", query)
                         .queryParam("language", "ko-KR")
