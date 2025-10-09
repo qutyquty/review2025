@@ -85,8 +85,10 @@ public class ReviewController {
 			
 			List<CastDTO> castList = Optional.ofNullable(credits.getCast())
 			        .orElse(Collections.emptyList());
+			
+			int castListCount = castList.size() < 8 ? castList.size() : 8;
 
-			for (int i = 0; i < 8; i++) {
+			for (int i = 0; i < castListCount; i++) {
 			    CastDTO actor = castList.get(i);
 			    if (actor == null) {
 			        System.out.println("배우 " + i + "번이 null 입니다.");
@@ -165,6 +167,7 @@ public class ReviewController {
     public String selectMovie(@RequestParam("movieId") Long movieId,
     		@RequestParam("movieTitle") String movieTitle,
     		@RequestParam("reviewId") Long reviewId,
+    		@RequestParam("categoryId") Integer categoryId,
     		Principal principal) {
 		
 		// reviewId>0: review에 있는 거는 tmdb_id만 update
@@ -174,7 +177,7 @@ public class ReviewController {
 			this.reviewService.updateTmdb(reviewId, movieId);
 		} else {
 			// tmdb 검색 화면 - 선택한 포스터로 tmdb 영화 id 가져와서 저장
-			Category category = this.categoryService.getCategory(1);
+			Category category = this.categoryService.getCategory(categoryId);
 			SiteUser siteUser = this.userService.getUser(principal.getName());
 			this.reviewService.createTmdb(movieTitle, movieId, category, siteUser);
 		}

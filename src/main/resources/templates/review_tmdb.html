@@ -22,6 +22,7 @@
   <input type="hidden" name="movieId" id="movieId">
   <input type="hidden" name="movieTitle" id="movieTitle">
   <input type="hidden" name="reviewId" id="reviewId">
+  <input type="hidden" name="categoryId" id="categoryId">
   <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 </form>
 
@@ -35,13 +36,14 @@
 			  	포스터 없음
 			  </div>
 				<div class="card-body">
-					<h5 class="card-title" th:text="${#strings.defaultString(movie.title, '')}"></h5>
+					<h5 class="card-title" th:text="${movie.displayTitle}"></h5>
 					<p class="card-text"><small class="text-muted" th:text="${movie.releaseDate}"></small></p>
 				</div>
         <button type="button"
                 class="btn btn-sm btn-primary select-btn"
                 th:data-id="${movie.id}"
-                th:data-title="${movie.title}"
+                th:data-title="${movie.displayTitle}"
+                th:data-categoryId="${selectedCategory}"
                 th:data-reviewId="${reviewId}">
           선택
         </button>
@@ -56,16 +58,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("movieForm");
     const movieIdInput = document.getElementById("movieId");
     const movieTitleInput = document.getElementById("movieTitle");
+    const categoryIdInput = document.getElementById("categoryId");
     const reviewIdInput = document.getElementById("reviewId");
 
     document.querySelectorAll(".select-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const movieId = btn.getAttribute("data-id");
         const movieTitle = btn.getAttribute("data-title");
+        const categoryId = btn.getAttribute("data-categoryId");
         const reviewId = btn.getAttribute("data-reviewId");
         
         movieIdInput.value = movieId;
         movieTitleInput.value = movieTitle;
+        categoryIdInput.value = categoryId;
         reviewIdInput.value = reviewId;
         form.submit(); // CSRF 토큰 포함된 폼 전송
       });
