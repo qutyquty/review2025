@@ -73,9 +73,16 @@ public class ReviewController {
 			title = title.substring(0, idx);
 		}
 		
+		// movId(tmdb id) 가 null 이면
+		// movId(tmdb id) 가 있으면 배우리스트를 가져와서 보여준다.
 		if (movId == null) {
 			String encodedTitle = URLEncoder.encode(title, StandardCharsets.UTF_8);
-			return "redirect:/movies/search?title=" + encodedTitle + "&reviewId=" + id + "&category=" + categoryId;
+			//return "redirect:/movies/search?title=" + encodedTitle + "&reviewId=" + id + "&category=" + categoryId;
+
+			model.addAttribute("castList", null);
+	        model.addAttribute("movie", null);
+			model.addAttribute("review", reviewDTO);
+			return "review_detail";
 		} else {
 			//MovieDTO movie = movieService.getMovieById(movId);
 			//CreditsResponse credits = movieService.getMovieCredits(movId);

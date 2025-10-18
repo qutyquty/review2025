@@ -14,13 +14,15 @@
 	      <!-- 제목 -->
 	      <h2 class="card-title mb-0 me-3 text-start" th:text="${review.title}"></h2>
 	      <!-- 개봉일 -->
-	      <small class="text-muted" th:text="${movie.releaseDate}"></small>
+	      <small th:if="${movie != null}" class="text-muted" th:text="${movie.releaseDate}"></small>
+	      <!-- return "redirect:/movies/search?title=" + encodedTitle + "&reviewId=" + id + "&category=" + categoryId; -->
+	      <a th:href="@{/movies/search(title=${review.title}, reviewId=${review.id}, category=${review.getCategory.getId})}" class="btn btn-primary">tmdb 검색</a>
 	    </div>
 	  </div>
 	</div>
 
     <!-- 두 번째 row: 왼쪽 포스터 / 오른쪽 overview + 배우 -->
-    <div class="row g-3">
+    <div class="row g-3" th:if="${movie != null}">
       <!-- 왼쪽: 포스터 -->
       <div class="col-md-4">
         <img th:if="${movie.posterPath != null}"
