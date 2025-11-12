@@ -101,7 +101,7 @@ public class ReviewController {
 			        System.out.println("배우 " + i + "번이 null 입니다.");
 			    } else {
 			        System.out.println("배우 " + i + "번: name=" + actor.getName() 
-			                           + ", profilePath=" + actor.getProfilePath());
+			                           + ", id=" + actor.getId());
 			    }
 			}
 			

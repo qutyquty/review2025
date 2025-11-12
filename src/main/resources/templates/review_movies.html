@@ -1,0 +1,22 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
+	<h5 class="my-3 border-bottom pb-2">REVIEW MOVIES</h5>
+	<div class="row row-cols-2 row-cols-md-4 g-4">
+	  <div class="col" th:each="movie : ${movies}">
+	    <div class="card h-100 text-center">
+	      <img th:src="|https://image.tmdb.org/t/p/w200${movie.posterPath}|"
+	           class="card-img-top"
+	           alt="poster">
+	      <div class="card-body">
+	        <h6 class="card-title" th:text="${movie.title}"></h6>
+	        <p class="card-text text-muted">
+	          <span th:if="${movie.mediaType == 'movie'}">🎬 영화</span>
+	          <span th:if="${movie.mediaType == 'tv'}">📺 드라마</span>
+	          <span th:text="${movie.releaseDate}"></span>
+	        </p>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+</div>
+</html>

@@ -38,15 +38,17 @@
         <!-- 출연 배우 카드 -->
         <div class="row row-cols-2 row-cols-md-4 g-4">
           <div class="col" th:each="actor, iterStat : ${castList}" th:if="${iterStat.index < 8}">
-            <div class="card h-100 text-center">
-              <img th:src="|https://image.tmdb.org/t/p/w200${actor.profilePath}|"
-                   class="card-img-top"
-                   alt="photo">
-              <div class="card-body">
-                <h6 class="card-title" th:text="${actor.name}"></h6>
-                <p class="card-text text-muted" th:text="${actor.character}"></p>
-              </div>
-            </div>
+          	<a th:href="@{/actors/{id}/movies(id=${actor.id})}" class="text-decoration-none">
+	            <div class="card h-100 text-center">
+	              <img th:src="|https://image.tmdb.org/t/p/w200${actor.profilePath}|"
+	                   class="card-img-top"
+	                   alt="photo">
+	              <div class="card-body">
+	                <h6 class="card-title" th:text="${actor.name}"></h6>
+	                <p class="card-text text-muted" th:text="${actor.character}"></p>
+	              </div>
+	            </div>
+            </a>
           </div>
         </div>
       </div>

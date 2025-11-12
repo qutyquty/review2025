@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 public class CastDTO {
 	
+	private Long id;
 	private String name;       // 배우 이름
     private String character;  // 배역 이름
 
